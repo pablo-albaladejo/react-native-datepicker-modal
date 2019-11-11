@@ -26,6 +26,7 @@ class DatePicker extends Component {
 
   static defaultProps = {
     startDate: new Date(),
+    onClose: noop,
     onError: noop,
     onDateChanged: noop,
     maxDate: new Date(32519532187368),
@@ -47,6 +48,10 @@ class DatePicker extends Component {
        *    console.log(error)
        * }
        */
+    /**
+     * Function called when modal closed
+     */
+    onClose: PropTypes.func,
     onError: PropTypes.func,
     /**
        * Function called when new date has been selected. Receives object with selected `date`, `year`, `day` and `month`.
@@ -86,8 +91,8 @@ class DatePicker extends Component {
     this.handleShow()
   }
 
-  componentWillReceiveProps = () => {
-    this.handleShow()
+  componentDidUpdate = (prevProps) => {
+    if(prevProps.show !== this.props.show) this.handleShow()
   }
 
   handlePressed = async () => {
@@ -104,15 +109,18 @@ class DatePicker extends Component {
 
         const newDate = new Date(year, month, day)
 
+        this.props.onClose()
+
         if (action !== DatePickerAndroid.dismissedAction) {
-          this.setState(() => ({ date: newDate, startDate: newDate }))
-          this.props.onDateChanged(this.getDateObj())
+          this.setState(() => ({ date: newDate, startDate: newDate }));
+          this.props.onDateChanged(this.getDateObj()); this.props.onClose()
         }
+
       } catch (error) {
         onError(error)
       }
     } else {
-      this.setState(() => ({ show: true }))
+      this.setState({ show: true });
     }
   }
 
@@ -128,11 +136,14 @@ class DatePicker extends Component {
   }
 
   handleModalClose = () => {
-    this.setState(
-      () => ({ show: false }),
+    this.setState({
+      show: false
+    },
       () => {
-        const { onDateChanged } = this.props
-        onDateChanged(this.getDateObj())
+        this.props.onClose();
+
+        const { onDateChanged } = this.props;
+        onDateChanged(this.getDateObj());
       }
     )
   }
@@ -185,10 +196,8 @@ class DatePicker extends Component {
   }
 
   handleShow = () => {
-    this.handlePressed()
+    this.props.show && this.handlePressed()
   }
-
-
 
   renderAndroid = () => {
     return (<View></View>)
