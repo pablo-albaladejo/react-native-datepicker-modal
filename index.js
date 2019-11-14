@@ -21,7 +21,7 @@ function noop() { }
 class DatePicker extends Component {
   state = {
     show: this.props.show || false,
-    date: undefined
+    date: this.props.date || new Date()
   }
 
   static defaultProps = {
@@ -92,7 +92,7 @@ class DatePicker extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    if(prevProps.show !== this.props.show) this.handleShow()
+    if (prevProps.show !== this.props.show) this.handleShow()
   }
 
   handlePressed = async () => {
