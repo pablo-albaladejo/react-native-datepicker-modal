@@ -21,7 +21,7 @@ function noop() { }
 class DatePicker extends Component {
   state = {
     show: this.props.show || false,
-    date: this.props.date || new Date()
+    date: null
   }
 
   static defaultProps = {
@@ -127,12 +127,7 @@ class DatePicker extends Component {
   getDateObj = () => {
     const { date } = this.state
 
-    return {
-      date,
-      year: date ? date.getFullYear() : '',
-      day: date ? `${date.getDate()}`.padStart(2, '0') : '',
-      month: date ? `${date.getMonth() + 1}`.padStart(2, '0') : ''
-    }
+    return date || this.props.startDate
   }
 
   handleModalClose = () => {
